@@ -2,7 +2,8 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 
-import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams, Link, useNavigate } from 'react-router-dom';
+import { Tabs } from 'mate-academy/react_tabs';
 
 const tabs = [
   { id: 'tab-1', title: 'Tab 1', content: 'Some text 1' },
@@ -16,18 +17,15 @@ function Navigation() {
   const isTabsActive = location.pathname.startsWith('/tabs');
 
   return (
-    <nav
-      className="navbar is-light is-fixed-top is-mobile has-shadow"
-      data-cy="Nav"
-    >
+    <nav className="navbar is-light is-fixed-top is-mobile has-shadow" data-cy="Nav">
       <div className="container">
         <div className="navbar-brand">
-          <a href="#/" className={`navbar-item ${isHomeActive ? 'is-active' : ''}`}>
-            Home
-          </a>
-          <a href="#/tabs" className={`navbar-item ${isTabsActive ? 'is-active' : ''}`}>
-            Tabs
-          </a>
+          <div className={`navbar-item ${isHomeActive ? 'is-active' : ''}`}>
+            <Link to="/">Home</Link>
+          </div>
+          <div className={`navbar-item ${isTabsActive ? 'is-active' : ''}`}>
+            <Link to="/tabs">Tabs</Link>
+          </div>
         </div>
       </div>
     </nav>
@@ -40,25 +38,19 @@ function HomePage() {
 
 function TabsPage() {
   const { tabId } = useParams();
-  const activeTab = tabs.find(tab => tab.id === tabId);
+  const navigate = useNavigate();
+
+  const activeTab = tabs.find((tab) => tab.id === tabId);
+
+  const handleTabSelect = (id: string) => {
+    navigate(`/tabs/${id}`);
+  };
 
   return (
     <div>
       <h1 className="title">Tabs page</h1>
 
-      <div className="tabs is-boxed">
-        <ul>
-          {tabs.map(tab => (
-            <li
-              key={tab.id}
-              data-cy="Tab"
-              className={activeTab?.id === tab.id ? 'is-active' : ''}
-            >
-              <a href={`#/tabs/${tab.id}`}>{tab.title}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Tabs tabs={tabs} selectedId={activeTab?.id} onTabSelected={handleTabSelect} />
 
       <div className="block" data-cy="TabContent">
         {activeTab ? activeTab.content : 'Please select a tab'}
@@ -74,7 +66,6 @@ function NotFoundPage() {
 export const App = () => (
   <>
     <Navigation />
-
     <div className="section">
       <div className="container">
         <Routes>
