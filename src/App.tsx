@@ -2,8 +2,7 @@ import 'bulma/css/bulma.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import './App.scss';
 
-import { Routes, Route, Navigate, useLocation, useParams, Link, useNavigate } from 'react-router-dom';
-import { Tabs } from 'mate-academy/react_tabs';
+import { Routes, Route, Navigate, useLocation, useParams, Link } from 'react-router-dom';
 
 const tabs = [
   { id: 'tab-1', title: 'Tab 1', content: 'Some text 1' },
@@ -38,19 +37,21 @@ function HomePage() {
 
 function TabsPage() {
   const { tabId } = useParams();
-  const navigate = useNavigate();
-
-  const activeTab = tabs.find((tab) => tab.id === tabId);
-
-  const handleTabSelect = (id: string) => {
-    navigate(`/tabs/${id}`);
-  };
+  const activeTab = tabs.find(tab => tab.id === tabId);
 
   return (
     <div>
       <h1 className="title">Tabs page</h1>
 
-      <Tabs tabs={tabs} selectedId={activeTab?.id} onTabSelected={handleTabSelect} />
+      <div className="tabs is-boxed">
+        <ul>
+          {tabs.map(tab => (
+            <li key={tab.id} data-cy="Tab" className={activeTab?.id === tab.id ? 'is-active' : ''}>
+              <Link to={`/tabs/${tab.id}`}>{tab.title}</Link>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       <div className="block" data-cy="TabContent">
         {activeTab ? activeTab.content : 'Please select a tab'}
